@@ -1,0 +1,80 @@
+@CHARSET "ISO-8859-1";
+
+#header
+{
+	padding-top: 1px;
+	height: 40px;
+	z-index: 2;
+}
+
+#footer
+{
+	height: 40px;
+	z-index: 2;
+}
+
+.text-content
+{
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+#location-text
+{
+	padding-top: 8px;
+	font-size: 11px;
+}	
+
+#slider-wrap .ui-slider .ui-slider-handle
+{
+	height: 45px;
+	width: 30px;
+}
+
+
+#pin-control
+{
+	float: left;
+	padding-right: 4px;
+}
+
+ul#pin-on, ul#pin-off
+{
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+ul#pin-on li, ul#pin-off li, ul#icon-l li, ul#icon-r li
+{
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 8px;
+	padding-bottom: 8px;		
+}
+
+ul#pin-on li, ul#pin-off li
+{
+	margin: 2px;
+	position: relative;
+	cursor: pointer;
+	float: left;
+	list-style: none;
+}
+
+
+
+ul#pin-on span.ui-icon, ul#pin-off span.ui-icon
+{
+	float: left;
+	margin: 0 4px;
+}
+
+#OpenLayers_Control_MaximizeDiv, #OpenLayers_Control_MinimizeDiv,
+#OpenLayers_Control_MaximizeDiv_innerImage, #OpenLayers_Control_MinimizeDiv_innerImage
+{
+	/* Override element.style set by OL */
+	height: 45px !important;
+	width: 45px  !important;
+}
+

@@ -1,0 +1,87 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Horizon Digital Community History: Historical Mapping Demonstrator</title>
+		<script type="text/javascript" src="./js/firebug-lite.js"></script>
+		
+		 <!--  Jquiery includes -->
+		<link type="text/css" href="./jquery/css/smoothness/jquery-ui-1.8.2.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="./jquery/js/jquery-1.4.2.min.js"></script>
+		<script type="text/javascript" src="./jquery/js/jquery-ui-1.8.2.custom.min.js"></script>
+
+		<!-- GoogleMaps api for google layer -->
+		<script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWulMvjCoVfj5uB7rl1AXMBTvygD_nWCwiT7uTXQ353kz76lw9hRyadddMrPDKjfnmYh3J2P7N35VWQ'></script>
+
+		<!-- include OpenLayers -->
+		<script src="./OpenLayers/OpenLayers.js"></script>
+
+		<!--  Openlayers example base css files  -->
+		<link rel="stylesheet" href="./OpenLayers/theme/default/style.css" type="text/css" />
+		<link rel="stylesheet" href="./css/style.css" type="text/css" />
+
+		<!--  Site specific css -->
+		<link rel="stylesheet" href="./css/mcp_map.css" type="text/css" />
+
+		<!--  local javascript functions to initialise the map page -->
+		<script type="text/javascript" src="./js/mcp_map_lib.js"></script>
+		<script type="text/javascript">
+			var maxOpacity = 0.9;
+			var minOpacity = 0.1;
+			var defaultOpacity = 0.3;
+			//Set the limits to the map view restricting pan and zoom to a ceratin area			
+			var defaultBounds = new OpenLayers.Bounds(-1.4, 52.804, -0.97, 53.104);
+			// Don't Set the mobile browser flag to trigger mobile specific stuff
+			var mobileBrowser = false;			
+		</script>
+		<script type="text/javascript" src="./js/mcp_map.js"></script>
+
+		<!--  Google analysics stuff  -->
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-17153721-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+	</head>
+
+	<body>
+		<div id="header">
+			<!-- Overall banner heading -->
+			<div style="margin-left:auto; margin-right: auto;border:0px;padding:0px;height:79px;width:90%;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_centre.png) repeat-x scroll right top">
+				<div style="margin-left:auto; margin-right: auto;clear:left;float:left;border:0px;height:79px;width:204px;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_left.png) no-repeat scroll right top;"></div>
+				<div style="margin-top:0px;margin-left:auto; margin-right: auto;float:right;border:0px;height:79px;width:220px;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_right.png) no-repeat scroll right top;cursor: default;" onmouseover="this.style.cursor='hand';this.style.cursor='pointer';" onmouseout="this.style.cursor='default'" onclick="window.location='https://www.horizon.ac.uk/';"></div>
+			</div>
+			<div class="text-content">
+				<h1 id="title">Horizon Digital Community History: Historical Mapping Demonstrator</h1>
+				<p id="shortdesc">
+					This shows an Open Street Map base layer combined with a map of Nottingham city centre area in 1861.  Zoom in and slide the slider to
+					compare the maps.
+				</p>
+			</div>
+		</div>
+		<div id="map"></div>
+		<div id="footer" class="text-content">
+			<div id='slider-control-l'>
+				<ul id="icon-l" class="ui-widget">
+					<li class="ui-state-default ui-corner-all" title="Show more past"><span	class="ui-icon ui-icon-carat-1-w"></span></li>
+				</ul>
+				<div class="slider-label">1861</div>
+			</div>
+			<div id='slider-control-r'>
+				<ul id="icon-r" class="ui-widget">
+					<li class="ui-state-default ui-corner-all" title="Show more now"><span class="ui-icon ui-icon-carat-1-e"></span></li>
+				</ul>
+				<div class="slider-label">2010</div>
+			</div>
+			<div id="slider-wrap">
+				<div id="slider-spacer"></div>
+				<div id="slider"></div>
+			</div>
+			<div id="value-wrap"><input id="opacity" type="text" size="3" disabled="true" /></div>
+		</div>
+	</body>
+</html>

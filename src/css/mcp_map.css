@@ -1,0 +1,94 @@
+@CHARSET "ISO-8859-1";
+
+#map {
+	width: 99.9%;
+	border: 1px solid black;
+}
+
+#footer {
+	height: 35px;
+	bottom: 0px;
+	right: 0px;
+	clear: both;
+	margin-top: 1px;
+}
+
+#slider-wrap {
+}
+
+#slider-spacer {
+	height: 2px;
+}
+
+
+#value-wrap {
+	display: none;
+}
+
+.text-content {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.olPopup p {
+	margin: 0px;
+	font-size: .9em;
+}
+
+.olPopup h2 {
+	font-size: 1.2em;
+}
+
+
+#slider-control-l {
+	float: left;
+}
+
+#slider-control-r {
+	float: right;
+}
+
+#footer .slider-label {
+	float: left;
+	font-weight: bold;
+	margin-top: 0px;
+	clear: both;
+}
+
+#slider-wrap #slider {
+	margin-left: 50px;
+	margin-right: 60px;
+	margin-top: 5px;
+}
+
+#slider-wrap .ui-slider .ui-slider-handle
+{
+	height: 1.8em;
+	width: 1.8em;
+}
+
+#slider-wrap .ui-slider-horizontal
+{
+	margin-top: 0.2em;
+	height:1.3em;
+}
+
+ul#icon-l,ul#icon-r {
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+ul#icon-l li,ul#icon-r li {
+	margin: 2px;
+	position: relative;
+	padding: 4px 0;
+	cursor: pointer;
+	float: left;
+	list-style: none;
+}
+
+ul#icon-l span.ui-icon,ul#icon-r span.ui-icon {
+	float: left;
+	margin: 0 4px;
+}
