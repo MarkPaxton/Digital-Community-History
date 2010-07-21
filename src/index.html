@@ -22,7 +22,6 @@
 		<link rel="stylesheet" href="./css/mcp_map.css" type="text/css" />
 
 		<!--  local javascript functions to initialise the map page -->
-		<script type="text/javascript" src="./js/mcp_map_lib.js"></script>
 		<script type="text/javascript">
 			var maxOpacity = 0.9;
 			var minOpacity = 0.1;
@@ -50,18 +49,21 @@
 
 	<body>
 		<div id="header">
-			<!-- Overall banner heading -->
-			<div style="margin-left:auto; margin-right: auto;border:0px;padding:0px;height:79px;width:90%;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_centre.png) repeat-x scroll right top">
-				<div style="margin-left:auto; margin-right: auto;clear:left;float:left;border:0px;height:79px;width:204px;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_left.png) no-repeat scroll right top;"></div>
-				<div style="margin-top:0px;margin-left:auto; margin-right: auto;float:right;border:0px;height:79px;width:220px;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_right.png) no-repeat scroll right top;cursor: default;" onmouseover="this.style.cursor='hand';this.style.cursor='pointer';" onmouseout="this.style.cursor='default'" onclick="window.location='https://www.horizon.ac.uk/';"></div>
+			<div id="header-toggle-content">
+				<!-- Overall banner heading -->
+				<div style="margin-left:auto; margin-right: auto;border:0px;padding:0px;height:79px;width:90%;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_centre.png) repeat-x scroll right top">
+					<div style="margin-left:auto; margin-right: auto;clear:left;float:left;border:0px;height:79px;width:204px;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_left.png) no-repeat scroll right top;"></div>
+					<div style="margin-top:0px;margin-left:auto; margin-right: auto;float:right;border:0px;height:79px;width:220px;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_right.png) no-repeat scroll right top;cursor: default;" onmouseover="this.style.cursor='hand';this.style.cursor='pointer';" onmouseout="this.style.cursor='default'" onclick="window.location='https://www.horizon.ac.uk/';"></div>
+				</div>
+				<div class="text-content">
+					<h1 id="title">Horizon Digital Community History: Historical Mapping Demonstrator</h1>
+					<p id="shortdesc">
+						This shows an Open Street Map base layer combined with a map of Nottingham city centre area in 1861.  Zoom in and slide the slider to
+						compare the maps.
+					</p>
+				</div>
 			</div>
-			<div class="text-content">
-				<h1 id="title">Horizon Digital Community History: Historical Mapping Demonstrator</h1>
-				<p id="shortdesc">
-					This shows an Open Street Map base layer combined with a map of Nottingham city centre area in 1861.  Zoom in and slide the slider to
-					compare the maps.
-				</p>
-			</div>
+			<div id='header-toggle' class='text-content'><a href='#' id='hide_header'>Hide header</a><a href='#' id='show_header'>Show header</a></div>
 		</div>
 		<div id="map"></div>
 		<div id="footer" class="text-content">

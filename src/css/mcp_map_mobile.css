@@ -32,20 +32,24 @@
 }
 
 
-#pin-control
+#pin-control, 
+#popup-control	
 {
 	float: left;
 	padding-right: 4px;
 }
 
-ul#pin-on, ul#pin-off
+ul#pin-on, ul#pin-off,
+ul#popup-on, ul#popup-off
 {
 	margin: 0;
 	padding: 0;
 	float: left;
 }
 
-ul#pin-on li, ul#pin-off li, ul#icon-l li, ul#icon-r li
+ul#pin-on li, ul#pin-off li,
+ul#popup-on li, ul#popup-off li,
+ul#icon-l li, ul#icon-r li
 {
 	padding-left: 6px;
 	padding-right: 6px;
@@ -53,7 +57,8 @@ ul#pin-on li, ul#pin-off li, ul#icon-l li, ul#icon-r li
 	padding-bottom: 8px;		
 }
 
-ul#pin-on li, ul#pin-off li
+ul#pin-on li, ul#pin-off li, 
+ul#popup-on li, ul#popup-off li
 {
 	margin: 2px;
 	position: relative;
@@ -64,7 +69,8 @@ ul#pin-on li, ul#pin-off li
 
 
 
-ul#pin-on span.ui-icon, ul#pin-off span.ui-icon
+ul#pin-on span.ui-icon, ul#pin-off span.ui-icon, 
+ul#popup-on span.ui-icon, ul#popup-off span.ui-icon
 {
 	float: left;
 	margin: 0 4px;

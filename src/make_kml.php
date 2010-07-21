@@ -114,14 +114,16 @@ function make_kml_item($row)
 	{
 		$url_end = 'derbyshire/' . $row['Ref_No'] . '.jpg';
 	}
-	
+	$replace_chars = array('', '');
+	$sanitised_date = str_replace($replace_chars, '\'', $row['Date_of_Image']);
+	$sanitised_description = str_replace($replace_chars, '\'', htmlspecialchars_decode(htmlspecialchars_decode($row['Further_Information'])));
 	ob_start();
 ?>
 	<Placemark>
-		<name><?php echo($row['Title']); ?></name>
+		<name><?php echo($row['Title'] . " (#" . $row['Ref_No'] . ")"); ?></name>
 		<description><![CDATA[
-		<div>Date of image: <?php echo($row['Date_of_Image']); ?></div>
-		<div><?php echo(htmlspecialchars_decode(htmlspecialchars_decode($row['Further_Information']))); ?></div>
+		<div>Date of image: <?php echo($sanitised_date); ?></div>
+		<div><?php echo($sanitised_description); ?></div>
 		<div><img src="https://www.hpacde.org.uk/picturethepast/jpgh_<?php echo($url_end) ?>"></div>
 		]]></description>
 		<LookAt>
@@ -159,8 +161,7 @@ function make_kml_tail()
 
 try {
     $dbh = new PDO('sqlite:./ptp.db');
-    $rows = array();
-  /*  $ids_to_use = array(
+    $ids_to_use = array(
     	'NTGM017475',
 		'NTGM016059',
 		'NTGM016028',
@@ -241,9 +242,38 @@ try {
 		'DCHQ502753',
 		'DCHQ502752',
 		'DCHQ002076'
-    );*/
-//    $query = "SELECT * from ptp_data WHERE (`Ref_No`='" . implode("') OR (`Ref_No`='", $ids_to_use) . "')";
-    $query = "SELECT * from ptp_data WHERE (MapLong != '52.95435674') AND (MapLat != '-1.153011124')";
+    );
+    if(array_key_exists('mode', $_GET))
+    {
+    	$mode = $_GET['mode'];
+    }
+    else 
+    {
+    	$mode = '';
+    }
+    
+    // set a mode parameter in the URL to select which subset of points to use...
+    switch($mode)
+    {
+    	case 'full':
+    		// All data
+			$where = "";
+		break; 
+		case 'notts':
+	    	$where =  " WHERE (`MapLong` != '52.95435674') AND (`MapLat` != '-1.153011124')";
+		break;
+		default:
+			$where = " WHERE (`Ref_No`='" . implode("') OR (`Ref_No`='", $ids_to_use) . "')";    		
+    }
+    $query = "SELECT * from ptp_data" . $where . ";";
+
+    if(array_key_exists('debug', $_GET))
+    {
+    	echo($query);
+		exit;
+    }
+    
+    $rows = array();
     foreach($dbh->query($query) as $row) {
         //print_r($row);
         $rows[] = $row;
@@ -263,5 +293,7 @@ foreach($rows as $row)
 }
 $output .= make_kml_tail();
 
+ob_start("ob_gzhandler");
 echo $output;
+ob_flush();
 ?>

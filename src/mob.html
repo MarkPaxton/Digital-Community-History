@@ -1,6 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>Horizon Digital Community History: Historical Mapping Demonstrator</title>
+	<script type="text/javascript" src="./js/firebug-lite.js"></script>
 
 	<!--  Jquery includes -->
 	<link type="text/css" href="./jquery/css/smoothness/jquery-ui-1.8.2.custom.css" rel="stylesheet" />
@@ -22,7 +23,6 @@
 	<link rel="stylesheet" href="./css/mcp_map_mobile.css" type="text/css" />
  
  	<!--  local javascript functions to initialise the map page -->
-	<script type="text/javascript" src="./js/mcp_map_lib.js"></script>
 	<script type="text/javascript">
 		var maxOpacity = 0.9;
 		var minOpacity = 0.1;
@@ -72,6 +72,14 @@
 			</ul>
 			<ul id="pin-off" class="ui-widget">
 				<li class="ui-state-default ui-corner-all" title="Toggle following location"><span id='pin-off-button' class="ui-icon ui-icon-arrow-4"></span></li>
+			</ul>
+		</div>
+		<div id='popup-control'>
+			<ul id="popup-on" class="ui-widget">
+				<li class="ui-state-default ui-corner-all" title="Toggle popups"><span id='popup-on-button' class="ui-icon ui-icon-newwin"></span></li>
+			</ul>
+			<ul id="popup-off" class="ui-widget">
+				<li class="ui-state-default ui-corner-all" title="Toggle popups"><span id='popup-off-button' class="ui-icon ui-icon-circlesmall-close"></span></li>
 			</ul>
 		</div>
 		<div id='location-text'>&nbsp;</div>

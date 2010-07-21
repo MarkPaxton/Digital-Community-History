@@ -73,7 +73,7 @@
 	height:1.3em;
 }
 
-ul#icon-l,ul#icon-r {
+ul#icon-l, ul#icon-r {
 	margin: 0;
 	padding: 0;
 	float: left;
@@ -88,7 +88,7 @@ ul#icon-l li,ul#icon-r li {
 	list-style: none;
 }
 
-ul#icon-l span.ui-icon,ul#icon-r span.ui-icon {
+ul#icon-l span.ui-icon, ul#icon-r span.ui-icon {
 	float: left;
 	margin: 0 4px;
 }
