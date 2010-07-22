@@ -50,31 +50,42 @@ function onPopupClose(evt) {
 }
 
 function onFeatureSelect(event) {
-	var feature = event.feature;
-    selectedFeature = feature;
-	var popup = new OpenLayers.Popup.FramedCloud("photo", 
-		feature.geometry.getBounds().getCenterLonLat(),
-		new OpenLayers.Size(200,200),
-		"<h2>"+feature.attributes.name + "</h2>" + feature.attributes.description,
-		null, true, onPopupClose
-	);
-	feature.popup = popup;
-	map.addPopup(popup, true);
+	if(!showingPopup)
+	{
+		showingPopup = true;
+		var feature = event.feature;
+		selectedFeature = feature;
+		/*	var popup = new OpenLayers.Popup.FramedCloud("photo", 
+			feature.geometry.getBounds().getCenterLonLat(),
+			new OpenLayers.Size(200,200),
+			"<h2>"+feature.attributes.name + "</h2>" + feature.attributes.description,
+			null, true, onPopupClose
+		);*/
+		var popup = new OpenLayers.Popup.FramedCloud("photo", 
+				feature.geometry.getBounds().getCenterLonLat(),
+				new OpenLayers.Size(200,200),
+				"<h2>"+feature.attributes.name + "</h2>" + feature.attributes.description,
+				null, true, onPopupClose
+		);
+		feature.popup = popup;
+		map.addPopup(popup, true);
+	}
 }
 
 
-function onFeatureUnselect(event) {
-    var feature = event.feature;
+function onFeatureUnselect(event) {    
+	var feature = event.feature;
     if(feature.popup) {
         map.removePopup(feature.popup);
         feature.popup.destroy();
         delete feature.popup;
     }
+    showingPopup = false;	
 }
 
 function onMapMoved(event)
 {
-	if(showPopups)
+	if(show_popups)
 	{
 		//console.info(event.object.center);
 		var count = 0;
@@ -84,7 +95,6 @@ function onMapMoved(event)
 			{				
 				select.select(photos.features[f]);
 			}
-			//console.info(photos.features[f]);
 		}
 	}
 }
@@ -220,7 +230,8 @@ var targetCircle;
 var follow_location = false;
 var photos;
 var select;
-var showPopups = false;
+var show_popups = false;
+var showingPopup = false;
 /* Set these in the callinng file to initialize map */
 /*var maxOpacity = 0.9;
 var minOpacity = 0.1;
@@ -312,6 +323,7 @@ $(function() {
 	});
 	map.addLayer(photos);
 
+	/*
 	targetAreaLayer = new OpenLayers.Layer.Vector("Trigger zone", {
 		projection: map.displayProjection
 	});
@@ -325,7 +337,7 @@ $(function() {
 	targetAreaLayer.addFeatures(targetCircle);
 	
 	map.addLayer(targetAreaLayer);
-	
+	*/
 	
 	markersLayer = new OpenLayers.Layer.Markers("Location", {
 		displayInLayerSwitcher: false
@@ -352,9 +364,9 @@ $(function() {
 	// Add different controls for mobile version and the desktop version
 	if(mobileBrowser)
 	{
-		$(function() {
+		/*$(function() {
 			this.touchhandler = new TouchHandler(map, 4);
-		});
+		});*/
 		map.setOptions({ panMethod: null });
 		
 		//Add rollover image for pin icons
