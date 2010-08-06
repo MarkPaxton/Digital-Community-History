@@ -19,16 +19,45 @@ $.extend({
 });
 
 
-function windowResized()
+function onWindowResized(showFooter)
 {
-	var newHeight = $(window).height() - $('#footer').height() - $('#header').height();
-	$('#map').height(newHeight);
-	//Manually correct for borders and margins that aren't counted in .height()
-	// by looking at the difference between document height and window height to fine the discrepency
-	var correctedHeight =  newHeight - ($(document).height() - $(window).height());
-	$('#map').height(correctedHeight);
+	var headerFooterHeight = 0;
+	if($('#header').is(":visible"))
+	{
+		headerFooterHeight = headerFooterHeight + $('#header').outerHeight(true);
+	}
+
+	if($('#footer').is(":visible"))
+	{
+		headerFooterHeight = headerFooterHeight + $('#footer').outerHeight(true);
+	}
 	
-	$('#map').width($(window).width()-2);
+	//Correct for borders and margins that aren't counted when setting with .height()
+	// by looking at the difference between document height and window height to fine
+	// the discrepancy
+	var bordersHeight = $('#map').outerHeight(true) - $('#map').height();
+	$('#map').height($(window).height() - headerFooterHeight - bordersHeight);
+	
+	bordersHeight = $('#map-popup').outerHeight(true) - $('#map-popup').height();
+	$('#map-popup').height($(window).height() - headerFooterHeight - bordersHeight);
+
+	//Since floats are used in the footer, they're not picked up by the height of #footer
+	// so to a final correction:
+	var footerOverflow = $(document).height() - $(window).height();
+	var newMapHeight = $('#map').height() - footerOverflow;
+	var newPopupHeight = $('#map-popup').height() - footerOverflow;
+	$('#map').height(newMapHeight);
+	$('#map-popup').height(newPopupHeight);
+	
+	// do the same with the width
+	var bordersWidth = $('#map').outerWidth(true) - $('#map').width();
+	$('#map').width($(window).width() - bordersWidth);
+	
+	bordersWidth = $('#map-popup').outerWidth(true) - $('#map-popup').width();
+	$('#map-popup').width($(window).width() - bordersWidth);
+
+	//Reposition the popup so that it covers the map if the header has gone
+	$('#map-popup').css('top', $('#map').position().top);
 }
 
 function changeOpacity(byOpacity, layer) {
@@ -55,32 +84,54 @@ function onFeatureSelect(event) {
 		showingPopup = true;
 		var feature = event.feature;
 		selectedFeature = feature;
-		/*	var popup = new OpenLayers.Popup.FramedCloud("photo", 
-			feature.geometry.getBounds().getCenterLonLat(),
-			new OpenLayers.Size(200,200),
-			"<h2>"+feature.attributes.name + "</h2>" + feature.attributes.description,
-			null, true, onPopupClose
-		);*/
-		var popup = new OpenLayers.Popup.FramedCloud("photo", 
-				feature.geometry.getBounds().getCenterLonLat(),
-				new OpenLayers.Size(200,200),
-				"<h2>"+feature.attributes.name + "</h2>" + feature.attributes.description,
-				null, true, onPopupClose
-		);
-		feature.popup = popup;
-		map.addPopup(popup, true);
+
+		var featureHTML = "<h2>"+feature.attributes.name + "</h2>" + feature.attributes.description; 
+
+		//If it's a mobile device, then show the popup full screen
+		// otherwise show it in a normal Openlayers Popup
+		if(!mobileBrowser)
+		{
+			var popup = new OpenLayers.Popup.FramedCloud("photo", 
+					feature.geometry.getBounds().getCenterLonLat(),
+					new OpenLayers.Size(200,200),
+					featureHTML,
+					null, true, onPopupClose
+			);
+			feature.popup = popup;
+			map.addPopup(popup, true);		
+		}
+		else
+		{
+			$('#header').hide();
+			$('#footer').hide();
+			onWindowResized();
+			$('#map-popup-content').html(featureHTML)
+			$('#map-popup').show();	
+			map.panTo(feature.geometry.getBounds().getCenterLonLat());
+		}
 	}
 }
 
 
 function onFeatureUnselect(event) {    
 	var feature = event.feature;
-    if(feature.popup) {
-        map.removePopup(feature.popup);
-        feature.popup.destroy();
-        delete feature.popup;
-    }
-    showingPopup = false;	
+	if(!mobileBrowser)
+	{
+		if(feature.popup)
+		{
+			map.removePopup(feature.popup);
+			feature.popup.destroy();
+			delete feature.popup;
+		}
+	}
+	else
+	{
+		$('#map-popup').hide();	
+	}
+	$('#header').show();
+	$('#footer').show();
+	onWindowResized();
+	showingPopup = false;	
 }
 
 function onMapMoved(event)
@@ -128,7 +179,7 @@ function updatePosition(location)
 {	
 	var locationLL = new OpenLayers.LonLat(location.coords.longitude, location.coords.latitude);		
 
-	// If the current location is out of bounds, then recentre from jubilee
+	// If the current location is out of bounds, then re-centre from jubilee
 	var imageBounds = new OpenLayers.Bounds( -1.158064,  52.946731, -1.139494, 52.958147);
 	if(!imageBounds.containsLonLat(locationLL))
 	{
@@ -136,12 +187,22 @@ function updatePosition(location)
 		jubilee campus or wherever specified for testing purposes */ 
 
 		// This is the alternative centre - where you actually are
+		
+		//Aspire Cafe
 		var alt_lon = -1.18494;
 		var alt_lat = 52.95162;
+		
+		//West End, Beestone
+		//var alt_lon = -1.21557;
+		//var alt_lat = 52.92373;
 
+		// Trip to Jerusalem
+		var desired_lon = -1.15200;
+		var desired_lat = 52.94937;
+		
 		// This is the desired centre - where the map should show you are
-		var desired_lon = -1.15050;
-		var desired_lat = 52.95333;
+		//var desired_lon = -1.15050;
+		//var desired_lat = 52.95333;
 
 		var corrected_lon = desired_lon + (location.coords.longitude - alt_lon);
 		var corrected_lat = desired_lat + (location.coords.latitude - alt_lat);
@@ -157,12 +218,20 @@ function updatePosition(location)
 	}
 	addMarker(lonLat);
 	console.log(lonLat);
+	// For mobile dispense with fancy animation...
 	if(follow_location)
 	{
-		map.panTo(lonLat);
+		if(!mobileBrowser)
+		{
+			map.panTo(lonLat);
+		}
+		else
+		{
+			map.setCenter(lonLat);
+		}
 	}
+	//convert this to the decimal degrees format
 	$('#location-text').html('Location:&nbsp;' + lonLat.lon + ', ' + lonLat.lat);
-	//map.setCenter(lonLat);
 }
 
 function handleGetPositionErrors(error)  
@@ -218,7 +287,7 @@ function setPopupsActive(pop)
 }
 
 /**
- *  Main code ececuted on loading of script....
+ *  Main code executed on loading of script....
  *  
  */
 
@@ -244,6 +313,18 @@ var defaultBounds = new OpenLayers.Bounds(-1.4, 52.804, -0.97, 53.104); */
 // Use the jquery $() function to set up script to run on loadComplete of the page...
 
 $(function() {
+	/*
+	 * First of all work out whether to display the mobile version or the full version
+	 */
+	var mobile_param = $.getUrlVar('mobile');
+	if(mobile_param=='true')
+	{
+		mobileBrowser = true;
+	}
+	else
+	{
+		mobileBrowser = false;
+	}
 	/* This section sets up the OpenLayers map stuff */
 	/* The default controls are removed and specific ones are added later
 	 * depending on whether it's a desktop or mobile version of the map
@@ -308,7 +389,10 @@ $(function() {
 			maxExtent: mapBounds
 		}
 	);
-	map.addLayer(notts_1861);
+	//Don't add this layer until everything else is loaded as it slows down the mobile version
+	// see document.load
+	//map.addLayer(notts_1861);
+
 	
 	photos = new OpenLayers.Layer.Vector("Picture the Past", {
 		projection: map.displayProjection,
@@ -364,13 +448,22 @@ $(function() {
 	// Add different controls for mobile version and the desktop version
 	if(mobileBrowser)
 	{
+		//Hide the main header
+		$('#full-header').hide();
+		// Add mobile specific style customisations
+		$('head').append('<link rel="stylesheet" href="./min/?f=css/mcp_map_mobile.css" type="text/css" />');
+		$('head').append('<meta http-equiv="content-type" content="text/html; charset=utf-8">');
+		$('head').append('<meta name="apple-mobile-web-app-capable" content="yes" />');
+		$('head').append('<meta name="apple-mobile-web-app-status-bar-style" content="black" />');
+		$('head').append('<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">');
+		
 		/*$(function() {
 			this.touchhandler = new TouchHandler(map, 4);
 		});*/
 		map.setOptions({ panMethod: null });
 		
-		//Add rollover image for pin icons
-		$('ul#pin-on li, ul#pin-off li').hover(
+		//Add rollover image for buttons
+		$('.button li').hover(
 				function() { $(this).addClass('ui-state-hover'); }, 
 				function() { $(this).removeClass('ui-state-hover'); }
 		);
@@ -380,30 +473,19 @@ $(function() {
 		setFollowLocation(true);  // Start following as default
 		
 		// Button to toggle following location or not (but still track and record location)
-		$('#pin-control').toggle(function() {
-			setFollowLocation(false);
-		},
-		function() {
-			setFollowLocation(true);
-		});
-
-		
-		//Add rollover image for pin icons
-		$('ul#popup-on li, ul#popup-off li').hover(
-				function() { $(this).addClass('ui-state-hover'); }, 
-				function() { $(this).removeClass('ui-state-hover'); }
+		$('#pin-control').toggle(
+			function() { setFollowLocation(false);},
+			function() { setFollowLocation(true);} 
 		);
-		
+
 		//For mobile version make popups appear as default
 		setPopupsActive(true);
-		// Button to toggle popups of photo data
-		$('#popup-control').toggle(function() {
-			setPopupsActive(false);
-		},
-		function() {
-			setPopupsActive(true);
-		});
 		
+		// Button to toggle popups of photo data
+		$('#popup-control').toggle(
+			function() { setPopupsActive(false); },
+			function() { setPopupsActive(true); }
+		);
 		
 		var hasGeolocation = !!navigator.geolocation;
 		var locationOptions = { enableHighAccuracy: true, timeout: 5000 }; 
@@ -421,42 +503,42 @@ $(function() {
 	}
 	else
 	{
+		// hide the mobile version controls
+		$('#mobile-header').hide();
 		map.addControl(new OpenLayers.Control.PanZoom());
 		map.addControl(new OpenLayers.Control.MousePosition());		
 		
 		//add buttons to hide/show header
-		$('#header-toggle').toggle(function() {
-			$('#header-toggle-content').hide();
-			$('#hide_header').hide();
-			$('#show_header').show();
-			windowResized();
-		},
-		function() {
-			$('#header-toggle-content').show();
-			$('#hide_header').show();
-			$('#show_header').hide();
-			windowResized();
-		});
+		$('#header-toggle').toggle(
+			function() {
+				$('#header-toggle-content').hide();
+				$('#hide_header').hide();
+				$('#show_header').show();
+				onWindowResized();
+			},
+			function() {
+				$('#header-toggle-content').show();
+				$('#hide_header').show();
+				$('#show_header').hide();
+				onWindowResized();
+			}
+		);
 		$('#show_header').hide();
 	}
 
 	// Add event handler for changing opacity (encompasses the label as well as just the button for 'fat fingers')  
-	$('#slider-control-l').click( function() {
+	$('#opacity-control-l').click( function() {
 		changeOpacity(0.1, notts_1861);
 	});
-	$('#slider-control-r').click( function() {
+	$('#opacity-control-r').click( function() {
 		changeOpacity(-0.1, notts_1861);
 	});
-	//Rollover function for opacity controls
-	$('#slider-control-l').hover(
-			function() { $('ul#icon-l li').addClass('ui-state-hover'); }, 
-			function() { $('ul#icon-l li').removeClass('ui-state-hover'); }
+	// Additional rollover function for opacity controls to highlight button when text is hovered too.
+	$('#opacity-control-l, #opacity-control-r').hover(
+			function() { $('#opacity-control-l li, #opacity-control-r li').addClass('ui-state-hover'); }, 
+			function() { $('#opacity-control-l li, #opacity-control-r li').removeClass('ui-state-hover'); }
 	);
-	$('#slider-control-r').hover(
-			function() { $('ul#icon-r li').addClass('ui-state-hover'); }, 
-			function() { $('ul#icon-r li').removeClass('ui-state-hover'); }
-	);
-	
+
 	// Set up slider to change opacity 
 	$('#slider').slider({
 			value: defaultOpacity,
@@ -467,14 +549,26 @@ $(function() {
 			slide:function(e, ui){setOpacity(ui.value, notts_1861);}
 	});
 
+	//Hide the map popup until needed 
+	$('#map-popup').hide();
+	//Add close event to the close button:
+	$('#map-popup-close').click(function() {
+		$('#map-popup').hide();
+		onPopupClose();
+	});	
+	
 	// Resize the map to fit window whenever the size is changed
-	$(window).resize(windowResized);
+	$(window).resize(onWindowResized);
 
 	setOpacity(defaultOpacity, notts_1861);
-	windowResized();				
 
 	//Centre on Nottingham market square
 	//map.setCenter(new OpenLayers.LonLat(-1.15050,  52.95333).transform(map.displayProjection, map.projection), 17);
 	//Centre map just outside Brewhouse Yard
 	map.setCenter(new OpenLayers.LonLat(-1.15200,  52.94937).transform(map.displayProjection, map.projection), 18);
+});
+
+$(window).load(function() {
+	map.addLayer(notts_1861);
+	onWindowResized();	
 });

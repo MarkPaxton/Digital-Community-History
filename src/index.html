@@ -1,28 +1,36 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns='http://www.w3.org/1999/xhtml'>
 	<head>
 		<title>Horizon Digital Community History: Historical Mapping Demonstrator</title>
-		<script type="text/javascript" src="./js/firebug-lite.js"></script>
 		
-		 <!--  Jquiery includes -->
-		<link type="text/css" href="./jquery/css/smoothness/jquery-ui-1.8.2.custom.css" rel="stylesheet" />	
-		<script type="text/javascript" src="./jquery/js/jquery-1.4.2.min.js"></script>
-		<script type="text/javascript" src="./jquery/js/jquery-ui-1.8.2.custom.min.js"></script>
+		<!-- All these are included using javascript minifier:	-->
+
+		<!-- firebug debugger
+		<script type='text/javascript' src='./js/firebug-lite.js'></script>
+		 -->
+
+		<!-- Jquery includes -->
+		<link type='text/css' href='./jquery/css/smoothness/jquery-ui-1.8.2.custom.css' rel='stylesheet' />	
+		<script type='text/javascript' src='./jquery/js/jquery-1.4.2.min.js'></script>
+		<script type='text/javascript' src='./jquery/js/jquery-ui-1.8.2.custom.min.js'></script>
+
+
+		<!-- include OpenLayers	
+		-->
+		<script src='./OpenLayers/OpenLayers.js'></script>
+
+		<!--  OpenLayers example base css files  
+		<link rel='stylesheet' href='./css/style.css' type='text/css' />
+		<link rel='stylesheet' href='./OpenLayers/theme/default/style.css' type='text/css' />
+		-->
+		
+		<!--  Site specific css
+		<link rel='stylesheet' href='.css/mcp_map.css' type='text/css' />
+		-->
 
 		<!-- GoogleMaps api for google layer -->
 		<script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAWulMvjCoVfj5uB7rl1AXMBTvygD_nWCwiT7uTXQ353kz76lw9hRyadddMrPDKjfnmYh3J2P7N35VWQ'></script>
-
-		<!-- include OpenLayers -->
-		<script src="./OpenLayers/OpenLayers.js"></script>
-
-		<!--  Openlayers example base css files  -->
-		<link rel="stylesheet" href="./OpenLayers/theme/default/style.css" type="text/css" />
-		<link rel="stylesheet" href="./css/style.css" type="text/css" />
-
-		<!--  Site specific css -->
-		<link rel="stylesheet" href="./css/mcp_map.css" type="text/css" />
-
 		<!--  local javascript functions to initialise the map page -->
-		<script type="text/javascript">
+		<script type='text/javascript'>
 			var maxOpacity = 0.9;
 			var minOpacity = 0.1;
 			var defaultOpacity = 0.3;
@@ -31,9 +39,18 @@
 			// Don't Set the mobile browser flag to trigger mobile specific stuff
 			var mobileBrowser = false;			
 		</script>
-		<script type="text/javascript" src="./js/mcp_map.js"></script>
+	
+		<!--  The main map script
+		<script type='text/javascript' src='./min/?f=js/mcp_map.js'></script>
+		<script type='text/javascript' src='./js/mcp_map.js'></script>
+		 -->
+		<!-- Include the files above using minify groups
+		 -->
+		<script type='text/javascript' src='./min/?g=mcp-map-js'></script>
+		<link rel='stylesheet' href='./min/?g=mcp-map-css' type='text/css' />
 
-		<!--  Google analysics stuff  -->
+
+		<!--  Google analytics stuff  -->
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
 		  _gaq.push(['_setAccount', 'UA-17153721-1']);
@@ -48,42 +65,80 @@
 	</head>
 
 	<body>
-		<div id="header">
-			<div id="header-toggle-content">
-				<!-- Overall banner heading -->
-				<div style="margin-left:auto; margin-right: auto;border:0px;padding:0px;height:79px;width:90%;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_centre.png) repeat-x scroll right top">
-					<div style="margin-left:auto; margin-right: auto;clear:left;float:left;border:0px;height:79px;width:204px;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_left.png) no-repeat scroll right top;"></div>
-					<div style="margin-top:0px;margin-left:auto; margin-right: auto;float:right;border:0px;height:79px;width:220px;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_right.png) no-repeat scroll right top;cursor: default;" onmouseover="this.style.cursor='hand';this.style.cursor='pointer';" onmouseout="this.style.cursor='default'" onclick="window.location='https://www.horizon.ac.uk/';"></div>
+		<div id='header'>
+			<div id='full-header'>
+				<div id='header-toggle-content'>
+					<!-- Overall banner heading -->
+					<div style='margin-left:auto; margin-right: auto;border:0px;padding:0px;height:79px;width:90%;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_centre.png) repeat-x scroll right top'>
+						<div style='margin-left:auto; margin-right: auto;clear:left;float:left;border:0px;height:79px;width:204px;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_left.png) no-repeat scroll right top;'></div>
+						<div style='margin-top:0px;margin-left:auto; margin-right: auto;float:right;border:0px;height:79px;width:220px;background: transparent url(https://www.horizon.ac.uk/templates/horizon/images/head_DER_right.png) no-repeat scroll right top;cursor: default;' onmouseover='this.style.cursor='hand';this.style.cursor='pointer';' onmouseout='this.style.cursor='default'' onclick='window.location='https://www.horizon.ac.uk/';'></div>
+					</div>
+					<div class='text-content'>
+						<h1 id='title'>Horizon Digital Community History: Historical Mapping Demonstrator</h1>
+						<p id='shortdesc'>
+							This shows an Open Street Map base layer combined with a map of Nottingham city centre area in 1861.  Zoom in and slide the slider to
+							compare the maps.
+						</p>
+					</div>
 				</div>
-				<div class="text-content">
-					<h1 id="title">Horizon Digital Community History: Historical Mapping Demonstrator</h1>
-					<p id="shortdesc">
-						This shows an Open Street Map base layer combined with a map of Nottingham city centre area in 1861.  Zoom in and slide the slider to
-						compare the maps.
-					</p>
+				<div id='header-toggle' class='text-content'>
+					<a href='#' id='hide_header'>Hide header</a>
+					<a href='#' id='show_header'>Show header</a>
 				</div>
 			</div>
-			<div id='header-toggle' class='text-content'><a href='#' id='hide_header'>Hide header</a><a href='#' id='show_header'>Show header</a></div>
+			<div id='mobile-header'>
+				<div id='pin-control' class='headerButton button'>
+					<ul id='pin-on' class='ui-widget floatLeft'>
+						<li class='ui-state-default ui-corner-all'
+							title='Toggle following location'><span id='pin-on-button'
+							class='ui-icon ui-icon-pin-s'></span></li>
+					</ul>
+					<ul id='pin-off' class='ui-widget floatLeft'>
+						<li class='ui-state-default ui-corner-all'
+							title='Toggle following location'><span id='pin-off-button'
+							class='ui-icon ui-icon-arrow-4'></span></li>
+					</ul>
+				</div>
+				<div id='popup-control' class='headerButton button'>
+					<ul id='popup-on' class='ui-widget'>
+						<li class='ui-state-default ui-corner-all' title='Toggle popups'><span
+							id='popup-on-button' class='ui-icon ui-icon-newwin'></span></li>
+					</ul>
+					<ul id='popup-off' class='ui-widget'>
+						<li class='ui-state-default ui-corner-all' title='Toggle popups'><span
+							id='popup-off-button' class='ui-icon ui-icon-circlesmall-close'></span></li>
+					</ul>
+				</div>
+				<div id='location-text'>&nbsp;</div>
+			</div>
 		</div>
-		<div id="map"></div>
-		<div id="footer" class="text-content">
-			<div id='slider-control-l'>
-				<ul id="icon-l" class="ui-widget">
-					<li class="ui-state-default ui-corner-all" title="Show more past"><span	class="ui-icon ui-icon-carat-1-w"></span></li>
+		<div id='map'></div>
+		<div id='footer' class='text-content'>
+			<div id='opacity-control-l' class='button floatLeft'>
+				<ul class='ui-widget'>
+					<li class='ui-state-default ui-corner-all' title='Show more past'><span	class='ui-icon ui-icon-carat-1-w'></span></li>
 				</ul>
-				<div class="slider-label">1861</div>
+				<div class='slider-label'>1861</div>
 			</div>
-			<div id='slider-control-r'>
-				<ul id="icon-r" class="ui-widget">
-					<li class="ui-state-default ui-corner-all" title="Show more now"><span class="ui-icon ui-icon-carat-1-e"></span></li>
+			<div id='opacity-control-r' class='button floatRight'>
+				<ul class='ui-widget'>
+					<li class='ui-state-default ui-corner-all' title='Show more now'><span class='ui-icon ui-icon-carat-1-e'></span></li>
 				</ul>
-				<div class="slider-label">2010</div>
+				<div class='slider-label'>2010</div>
 			</div>
-			<div id="slider-wrap">
-				<div id="slider-spacer"></div>
-				<div id="slider"></div>
+			<div id='slider-wrap'>
+				<div id='slider-spacer'></div>
+				<div id='slider'></div>
 			</div>
-			<div id="value-wrap"><input id="opacity" type="text" size="3" disabled="true" /></div>
+			<div id='value-wrap'><input id='opacity' type='text' size='3' disabled='true' /></div>
+		</div>
+		<div id='map-popup' style='display:none'>
+			<div id='map-popup-close' class='button floatRight'>
+				<ul id='map-popup-close-button' class='ui-widget'>
+					<li class='ui-state-default ui-corner-all' title='Close'>Close</li>
+				</ul>
+			</div>
+			<div id='map-popup-content' class='text-content'></div>
 		</div>
 	</body>
 </html>

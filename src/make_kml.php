@@ -122,9 +122,17 @@ function make_kml_item($row)
 	<Placemark>
 		<name><?php echo($row['Title'] . " (#" . $row['Ref_No'] . ")"); ?></name>
 		<description><![CDATA[
-		<div>Date of image: <?php echo($sanitised_date); ?></div>
-		<div><?php echo($sanitised_description); ?></div>
-		<div><img src="https://www.hpacde.org.uk/picturethepast/jpgh_<?php echo($url_end) ?>"></div>
+		<div  style="float:left;">Date of image: <?php echo($sanitised_date); ?></div>
+			<div><a href='#' class="image-<?php echo($row['Ref_No']); ?>" style="float:right;" onClick='$(".image-<?php echo($row['Ref_No']); ?>").hide(); $(".text-<?php echo($row["Ref_No"]); ?>").show();'>Show text</a></div>
+			<div><a class="text-<?php echo($row['Ref_No']); ?>" style="float:right;display:none;" href='#' onClick='$(".image-<?php echo($row['Ref_No']); ?>").show(); $(".text-<?php echo($row["Ref_No"]); ?>").hide();'>Show image</a></div>
+		<div style="clear:both;">
+			<div class="image-<?php echo($row['Ref_No']); ?>">
+				<img src="https://www.hpacde.org.uk/picturethepast/jpgl_<?php echo($url_end) ?>">	
+			</div>
+			<div class="text-<?php echo($row['Ref_No']); ?>" style="display:none;clear:both;">
+				<?php echo($sanitised_description); ?>
+			</div>
+		</div>
 		]]></description>
 		<LookAt>
 			<longitude><?php echo(htmlspecialchars($row['MapLat'])) ?></longitude>
@@ -243,6 +251,10 @@ try {
 		'DCHQ502752',
 		'DCHQ002076'
     );
+	$other_ids_to_use = array(
+		'NTGM013151', 'NTGM013155', 'NGTG004445', 'NTGM013248', 'NTGM012740'
+    );
+    
     if(array_key_exists('mode', $_GET))
     {
     	$mode = $_GET['mode'];

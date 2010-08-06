@@ -1,25 +1,43 @@
 @CHARSET "ISO-8859-1";
 
+#mobile-header
+{
+	padding-top: 1px;
+	height: 40px;
+	z-index: 2;
+}
+
 #map {
 	width: 99.9%;
 	border: 1px solid black;
 }
 
 #footer {
-	height: 35px;
 	bottom: 0px;
 	right: 0px;
 	clear: both;
 	margin-top: 1px;
 }
 
+.headerButton	
+{
+	float: left;
+	padding-right: 4px;
+}
+
+#location-text
+{
+	padding-top: 8px;
+	font-size: 11px;
+}	
+
 #slider-wrap {
+	
 }
 
 #slider-spacer {
 	height: 2px;
 }
-
 
 #value-wrap {
 	display: none;
@@ -39,12 +57,11 @@
 	font-size: 1.2em;
 }
 
-
-#slider-control-l {
+.floatLeft {
 	float: left;
 }
 
-#slider-control-r {
+.floatRight {
 	float: right;
 }
 
@@ -61,25 +78,23 @@
 	margin-top: 5px;
 }
 
-#slider-wrap .ui-slider .ui-slider-handle
-{
+#slider-wrap .ui-slider .ui-slider-handle {
 	height: 1.8em;
 	width: 1.8em;
 }
 
-#slider-wrap .ui-slider-horizontal
-{
+#slider-wrap .ui-slider-horizontal {
 	margin-top: 0.2em;
-	height:1.3em;
+	height: 1.3em;
 }
 
-ul#icon-l, ul#icon-r {
+.button ul {
 	margin: 0;
 	padding: 0;
 	float: left;
 }
 
-ul#icon-l li,ul#icon-r li {
+.button li {
 	margin: 2px;
 	position: relative;
 	padding: 4px 0;
@@ -88,7 +103,29 @@ ul#icon-l li,ul#icon-r li {
 	list-style: none;
 }
 
-ul#icon-l span.ui-icon, ul#icon-r span.ui-icon {
+.button span.ui-icon{
 	float: left;
 	margin: 0 4px;
+}
+
+#map-popup {
+	z-index: 1010;
+	position: absolute;
+	top: 4px;
+	height: 300px;
+	width: 200px;
+	border: solid 3px black;
+	background: #ffffff;
+	padding: 4px;
+	overflow-x:auto;
+	overflow-y:auto;
+}
+
+#map-popup-content {
+	clear:left;
+}
+
+#map-popup-close {
+	margin-left:auto;
+	margin-right:auto;
 }
