@@ -78,14 +78,29 @@ function onPopupClose(evt) {
     select.unselectAll();
 }
 
+/**
+ * Create the HTML to put in map feature popups - combine the title and discription as 
+ * using kml photo data most of it is done already
+ * @param feature Openlayers.Vector.Feature
+ * @returns {String} HTML of feature description
+ */
+function generateFeatureHTML(feature)
+{
+	var featureHTML = "<h2>"+feature.attributes.name + "</h2>" + feature.attributes.description;
+	return featureHTML;
+}
+
+/**
+ * Event handler for when a feature is clicked or selected due to proximity
+ * @param event 
+ */
 function onFeatureSelect(event) {
 	if(!showingPopup)
 	{
 		showingPopup = true;
 		var feature = event.feature;
 		selectedFeature = feature;
-
-		var featureHTML = "<h2>"+feature.attributes.name + "</h2>" + feature.attributes.description; 
+		var featureHTML = generateFeatureHTML(feature); 
 
 		//If it's a mobile device, then show the popup full screen
 		// otherwise show it in a normal Openlayers Popup
@@ -93,7 +108,7 @@ function onFeatureSelect(event) {
 		{
 			var popup = new OpenLayers.Popup.FramedCloud("photo", 
 					feature.geometry.getBounds().getCenterLonLat(),
-					new OpenLayers.Size(200,200),
+					new OpenLayers.Size(1,1),
 					featureHTML,
 					null, true, onPopupClose
 			);
@@ -105,13 +120,12 @@ function onFeatureSelect(event) {
 			$('#header').hide();
 			$('#footer').hide();
 			onWindowResized();
-			$('#map-popup-content').html(featureHTML)
+			$('#map-popup-content').html(featureHTML);
 			$('#map-popup').show();	
 			map.panTo(feature.geometry.getBounds().getCenterLonLat());
 		}
 	}
 }
-
 
 function onFeatureUnselect(event) {    
 	var feature = event.feature;
@@ -140,15 +154,93 @@ function onMapMoved(event)
 	{
 		//console.info(event.object.center);
 		var count = 0;
-		for(f in photos.features)
+		var photosInRange = new Array();
+		for(f in maplayers['photos'].features)
 		{
-			if(photos.features[f].atPoint(event.object.center, 20, 20))
-			{				
-				select.select(photos.features[f]);
-			}
+			if(maplayers['photos'].features[f].atPoint(event.object.center, 20, 20))
+			{			
+				photosInRange.push(maplayers['photos'].features[f]);
+			}			
+		}
+		switch(photosInRange.length)
+		{
+			case 0:
+				//do nothing
+			break;
+			case 1:
+				// show one photo directly
+				select.select(photosInRange.pop());
+			break;
+			default:
+				//more than one so show special dialogue box...
+				onFeaturesInRange(photosInRange);
+			break;
 		}
 	}
 }
+
+/**
+ * This is used in the mobile version to populate the full screen popup overlay
+ * this will add a switcher to select different photos in range.
+ * @param features
+ */
+function onFeaturesInRange(features)
+{
+	$('#header').hide();
+	$('#footer').hide();
+	onWindowResized();
+	
+	var featureInfos = new Array();
+	for(f in features)
+	{
+		featureInfos.push(generateFeatureHTML(maplayers['photos'].features[f]));
+	}
+	var featuresHTML = '<div><h2>Select photo...</h2>\n';
+	
+	var featureSelectID = 0;  // Use this as an id to swap between images
+
+	//set up the selection buttons first:
+	for(var featureSelectCount=0;featureSelectCount<featureInfos.length;featureSelectCount++)
+	{
+		var featureSelectLabel = featureSelectCount + 1;
+		featuresHTML +=	"<div id='map-popup-" + featureSelectCount + "' class='button photo-button floatLeft'>\n" +
+				"<ul id='map-popup-" + featureSelectCount + "-button' class='ui-widget'>\n" +
+				"<li class='ui-state-default ui-corner-all' title='Photo " + (featureSelectLabel) + "'>" + featureSelectLabel + "</li>\n" +
+				"</ul>\n" +
+				"</div>\n";
+	}
+	featuresHTML += '<div>\n';
+	
+	featuresHTML += '<div style="clear:left;">\n';
+	for(featureData in featureInfos)
+	{
+		featuresHTML += "<div id='photo-" + featureSelectID + "'>" + featureInfos[featureData] + '</div>\n';
+		featureSelectID++;
+	}
+	featuresHTML += '</div>\n';
+
+	$('#map-popup-content').html(featuresHTML);
+	for(var featureSelectCount=0;featureSelectCount<featureInfos.length;featureSelectCount++)
+	{
+		$("#photo-" + featureSelectCount).click(function() {
+			for(var featureSelectCount=0;featureSelectCount<featureInfos.length;featureSelectCount++)
+			{
+				$("#photo-" + featureSelectCount).hide();
+			}
+			conlsole.info(this);
+			this.show();
+		});
+		$("#photo-" + featureSelectCount).hide();
+	}
+	//Add rollover image for buttons
+	$('.photo-button li').hover(
+			function() { $(this).addClass('ui-state-hover'); }, 
+			function() { $(this).removeClass('ui-state-hover'); }
+	);
+
+	$('#map-popup').show();	
+}
+
 
 function addMarker(p)
 {
@@ -293,11 +385,10 @@ function setPopupsActive(pop)
 
 // Set some global variables
 var map;
-var notts_1861;
-var targetAreaLayer;
+var maplayers = new Array();
+var transparentLayer;
 var targetCircle;
 var follow_location = false;
-var photos;
 var select;
 var show_popups = false;
 var showingPopup = false;
@@ -325,6 +416,7 @@ $(function() {
 	{
 		mobileBrowser = false;
 	}
+	
 	/* This section sets up the OpenLayers map stuff */
 	/* The default controls are removed and specific ones are added later
 	 * depending on whether it's a desktop or mobile version of the map
@@ -351,33 +443,33 @@ $(function() {
 	 */
 
 	/* This is the remote Open Street Map layer */
-	var osm = new OpenLayers.Layer.OSM("Remote OSM", "http://tile.openstreetmap.org/${z}/${x}/${y}.png", 
+	maplayers['osm'] = new OpenLayers.Layer.OSM("Remote OSM", "http://tile.openstreetmap.org/${z}/${x}/${y}.png", 
 	{
 		attribution: '' 
 	});
-	map.addLayer(osm);
+	map.addLayer(maplayers['osm']);
 	
 	/* This is a google map layer in hybrid mode showing images and roads, etc */
-	var google_hybrid = new OpenLayers.Layer.Google("Google Satellite Map", 
+	maplayers['google_hybrid'] = new OpenLayers.Layer.Google("Google Satellite Map", 
 	{
 		type: G_SATELLITE_MAP,
 		sphericalMercator: true,
 		maxExtent: mapBounds
 	});
-	map.addLayer(google_hybrid);
+	map.addLayer(maplayers['google_hybrid']);
 
 	
 	/* This is a google map layer in map mode showing roads, etc */
-	var google_map = new OpenLayers.Layer.Google("Google Standard Map", 
+	maplayers['google_map'] = new OpenLayers.Layer.Google("Google Standard Map", 
 	{
 		type: G_NORMAL_MAP,
 		sphericalMercator: true,
 		maxExtent: mapBounds
 	});
-	map.addLayer(google_map);
+	map.addLayer(maplayers['google_map']);
 
 	/* Nottingham 1861 image layer */
-	notts_1861 = new OpenLayers.Layer.Image(
+	maplayers['notts_1861'] = new OpenLayers.Layer.Image(
 		'1861 Map',
 		'./images/1861_notts.png',
 		new OpenLayers.Bounds( -1.158064,  52.946731, -1.139494, 52.958147).transform(map.displayProjection, map.projection),
@@ -389,23 +481,42 @@ $(function() {
 			maxExtent: mapBounds
 		}
 	);
+	transparentLayer = 'notts_1861';
 	//Don't add this layer until everything else is loaded as it slows down the mobile version
 	// see document.load
-	//map.addLayer(notts_1861);
+	//map.addLayer(maplayers['notts_1861']);
 
 	
-	photos = new OpenLayers.Layer.Vector("Picture the Past", {
+	//use the url params to choose which subset of images to show: 
+	var imageset_param = $.getUrlVar('imageset');
+	var kml_param = '';
+	switch(imageset_param)
+	{
+		case 'selected':
+			kml_param = '?set=selected';
+		break;
+		case 'trip':
+			kml_param = '?set=trip';
+		break;
+		case 'full':
+			kml_param = '?set=full';
+		break;
+		default:
+			kml_param = '?set=default';
+	}
+	
+	maplayers['photos'] = new OpenLayers.Layer.Vector("Picture the Past", {
 		projection: map.displayProjection,
 		strategies: [new OpenLayers.Strategy.Fixed()],
 		protocol: new OpenLayers.Protocol.HTTP({
-			url: "make_kml.php",
+			url: "make_kml.php" + kml_param,
 			format: new OpenLayers.Format.KML({
 				extractStyles: true,
 				extractAttributes: true
 			})
 		})
 	});
-	map.addLayer(photos);
+	map.addLayer(maplayers['photos']);
 
 	/*
 	targetAreaLayer = new OpenLayers.Layer.Vector("Trigger zone", {
@@ -420,22 +531,22 @@ $(function() {
 		});
 	targetAreaLayer.addFeatures(targetCircle);
 	
-	map.addLayer(targetAreaLayer);
+	map.addLayer(maplayers['targetAreaLayer']);
 	*/
 	
-	markersLayer = new OpenLayers.Layer.Markers("Location", {
+	maplayers['markersLayer'] = new OpenLayers.Layer.Markers("Location", {
 		displayInLayerSwitcher: false
 	});
-	map.addLayer(markersLayer);
+	map.addLayer(maplayers['markersLayer']);
 	
 	/* Setting up the map */
 	/* Also uses JQuery UI to add more controls and control the page layout */
 
-	select = new OpenLayers.Control.SelectFeature(photos);
+	select = new OpenLayers.Control.SelectFeature(maplayers['photos']);
 	map.addControl(select);
     select.activate();
 
-    photos.events.on({
+    maplayers['photos'].events.on({
         "featureselected": onFeatureSelect,
         "featureunselected": onFeatureUnselect
     });
@@ -528,10 +639,10 @@ $(function() {
 
 	// Add event handler for changing opacity (encompasses the label as well as just the button for 'fat fingers')  
 	$('#opacity-control-l').click( function() {
-		changeOpacity(0.1, notts_1861);
+		changeOpacity(0.1, maplayers[transparentLayer]);
 	});
 	$('#opacity-control-r').click( function() {
-		changeOpacity(-0.1, notts_1861);
+		changeOpacity(-0.1, maplayers[transparentLayer]);
 	});
 	// Additional rollover function for opacity controls to highlight button when text is hovered too.
 	$('#opacity-control-l, #opacity-control-r').hover(
@@ -546,7 +657,7 @@ $(function() {
 			max: maxOpacity,
 			min: minOpacity,
 			animate: 'fast',
-			slide:function(e, ui){setOpacity(ui.value, notts_1861);}
+			slide:function(e, ui){setOpacity(ui.value, maplayers[transparentLayer]);}
 	});
 
 	//Hide the map popup until needed 
@@ -560,7 +671,6 @@ $(function() {
 	// Resize the map to fit window whenever the size is changed
 	$(window).resize(onWindowResized);
 
-	setOpacity(defaultOpacity, notts_1861);
 
 	//Centre on Nottingham market square
 	//map.setCenter(new OpenLayers.LonLat(-1.15050,  52.95333).transform(map.displayProjection, map.projection), 17);
@@ -569,6 +679,12 @@ $(function() {
 });
 
 $(window).load(function() {
-	map.addLayer(notts_1861);
+	map.addLayer(maplayers['notts_1861']);
+	var whitehall_version = $.getUrlVar('whitehall');
+	if(whitehall_version)
+	{
+		$('head').append("<script type='text/javascript' src='./min/?f=js/mcp_map_w.js'></script>");
+	}
+	setOpacity(defaultOpacity, maplayers[transparentLayer]);
 	onWindowResized();	
 });

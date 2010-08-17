@@ -255,9 +255,9 @@ try {
 		'NTGM013151', 'NTGM013155', 'NGTG004445', 'NTGM013248', 'NTGM012740'
     );
     
-    if(array_key_exists('mode', $_GET))
+    if(array_key_exists('set', $_GET))
     {
-    	$mode = $_GET['mode'];
+    	$mode = $_GET['set'];
     }
     else 
     {
@@ -267,15 +267,21 @@ try {
     // set a mode parameter in the URL to select which subset of points to use...
     switch($mode)
     {
+		case 'selected':
+			// selected images around trip
+			$where = " WHERE (`Ref_No`='" . implode("') OR (`Ref_No`='", $other_ids_to_use) . "')";
+		break;    		
+		case 'trip':
+			// all images containing trip && jerusalem
+			$where = " WHERE (`Ref_No`='" . implode("') OR (`Ref_No`='", $ids_to_use) . "')";    		
+		break;
     	case 'full':
-    		// All data
+    		// All data including duplicate locations
 			$where = "";
 		break; 
-		case 'notts':
-	    	$where =  " WHERE (`MapLong` != '52.95435674') AND (`MapLat` != '-1.153011124')";
-		break;
 		default:
-			$where = " WHERE (`Ref_No`='" . implode("') OR (`Ref_No`='", $ids_to_use) . "')";    		
+			// Limited set filtering duplicaters from a particular location
+	    	$where =  " WHERE (`MapLong` != '52.95435674') AND (`MapLat` != '-1.153011124')";
     }
     $query = "SELECT * from ptp_data" . $where . ";";
 
