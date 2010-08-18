@@ -122,9 +122,21 @@ function make_kml_item($row)
 	<Placemark>
 		<name><?php echo($row['Title'] . " (#" . $row['Ref_No'] . ")"); ?></name>
 		<description><![CDATA[
-		<div  style="float:left;">Date of image: <?php echo($sanitised_date); ?></div>
-			<div><a href='#' class="image-<?php echo($row['Ref_No']); ?>" style="float:right;" onClick='$(".image-<?php echo($row['Ref_No']); ?>").hide(); $(".text-<?php echo($row["Ref_No"]); ?>").show();'>Show text</a></div>
-			<div><a class="text-<?php echo($row['Ref_No']); ?>" style="float:right;display:none;" href='#' onClick='$(".image-<?php echo($row['Ref_No']); ?>").show(); $(".text-<?php echo($row["Ref_No"]); ?>").hide();'>Show image</a></div>
+		<div><a href='#' class="image-<?php echo($row['Ref_No']); ?>" style="float:right;" onClick='$(".image-<?php echo($row['Ref_No']); ?>").hide(); $(".text-<?php echo($row["Ref_No"]); ?>").show();'>
+		<div class='button floatRight'>
+				<ul class='ui-widget'>
+					<li class='ui-state-default ui-corner-all' title='Show text'>Show text</li>
+				</ul>
+			</div>
+		</a></div>
+		<div><a class="text-<?php echo($row['Ref_No']); ?>" style="float:right;display:none;" href='#' onClick='$(".image-<?php echo($row['Ref_No']); ?>").show(); $(".text-<?php echo($row["Ref_No"]); ?>").hide();'>
+			<div class='button floatRight'>
+				<ul class='ui-widget'>
+					<li class='ui-state-default ui-corner-all' title='Show text'>Show photo</li>
+				</ul>
+			</div>
+		</a></div>
+		<div style="float:left;">Date of image: <?php echo($sanitised_date); ?></div>
 		<div style="clear:both;">
 			<div class="image-<?php echo($row['Ref_No']); ?>">
 				<img src="https://www.hpacde.org.uk/picturethepast/jpgl_<?php echo($url_end) ?>">	

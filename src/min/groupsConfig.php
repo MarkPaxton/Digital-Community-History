@@ -11,7 +11,7 @@
 
 return array(
 	'mcp-map-css' => array(		
-	//	'//jquery/css/smoothness/jquery-ui-1.8.2.custom.css',
+	//	'//jquery/css/smoothness/jquery-ui-1.8.4.custom.css',
 		'//OpenLayers/theme/default/style.css',
 		'//css/style.css',
 		'//css/mcp_map.css'),
@@ -22,7 +22,7 @@ return array(
 		    'filepath' => '//jquery/js/jquery-1.4.2.min.js',
 		    'minifier' => '')), 
 		new Minify_Source(array(
-		    'filepath' => '//jquery/js/jquery-ui-1.8.2.custom.min.js',
+		    'filepath' => '//jquery/js/jquery-ui-1.8.4.custom.min.js',
 		    'minifier' => '')), */
 /*		new Minify_Source(array(
 		    'filepath' => '//OpenLayers/OpenLayers.js',
