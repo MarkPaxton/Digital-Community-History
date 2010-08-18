@@ -245,7 +245,7 @@ function addMarker(p)
 	var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
 	var icon = new OpenLayers.Icon('./images/pin.png', size,offset);
 	var marker = new OpenLayers.Marker(p, icon);
-	markersLayer.addMarker(marker);
+	maplayers['markersLayer'].addMarker(marker);
 }
 
 
