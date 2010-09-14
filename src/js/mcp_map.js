@@ -4,7 +4,15 @@
 $.extend({
   getUrlVars: function(){
     var vars = [], hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    var end_pos = window.location.href.indexOf('#');
+    if(end_pos==-1)
+    {
+    	var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    }
+    else
+    {
+    	var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1, end_pos).split('&');
+    }
     for(var i = 0; i < hashes.length; i++)
     {
       hash = hashes[i].split('=');
@@ -75,6 +83,10 @@ function setOpacity(toOpacity, layer) {
 
 
 function onPopupClose(evt) {
+	showingPopup = false;
+	$('#header').show();
+	$('#footer').show();
+	onWindowResized();
     select.unselectAll();
 }
 
@@ -86,7 +98,7 @@ function onPopupClose(evt) {
  */
 function generateFeatureHTML(feature)
 {
-	var featureHTML = "<h2>"+feature.attributes.name + "</h2>" + feature.attributes.description;
+	var featureHTML = '<h2>' + feature.attributes.name + '</h2>' + feature.attributes.description;
 	return featureHTML;
 }
 
@@ -122,7 +134,7 @@ function onFeatureSelect(event) {
 			onWindowResized();
 			$('#map-popup-content').html(featureHTML);
 			$('#map-popup').show();	
-			map.panTo(feature.geometry.getBounds().getCenterLonLat());
+			//map.panTo(feature.geometry.getBounds().getCenterLonLat());
 		}
 	}
 }
@@ -186,59 +198,44 @@ function onMapMoved(event)
  */
 function onFeaturesInRange(features)
 {
-	$('#header').hide();
-	$('#footer').hide();
-	onWindowResized();
+	if(!showingPopup)
+	{	showingPopup = true;
 	
-	var featureInfos = new Array();
-	for(f in features)
-	{
-		featureInfos.push(generateFeatureHTML(maplayers['photos'].features[f]));
-	}
-	var featuresHTML = '<div><h2>Select photo...</h2>\n';
+		$('#header').hide();
+		$('#footer').hide();
+		onWindowResized();
+		
+		var featureInfos = new Array();
+		for(f in features)
+		{
+			featureInfos.push(generateFeatureHTML(maplayers['photos'].features[f]));
+		}
+		var featuresHTML = '<div><h2>' + features.length + ' photos...</h2>\n';
+		featuresHTML += '<div id="tabs" style="clear:both">\n';
+		
+		var featureSelectID = 0;  // Use this as an id to swap between images
 	
-	var featureSelectID = 0;  // Use this as an id to swap between images
-
-	//set up the selection buttons first:
-	for(var featureSelectCount=0;featureSelectCount<featureInfos.length;featureSelectCount++)
-	{
-		var featureSelectLabel = featureSelectCount + 1;
-		featuresHTML +=	"<div id='map-popup-" + featureSelectCount + "' class='button photo-button floatLeft'>\n" +
-				"<ul id='map-popup-" + featureSelectCount + "-button' class='ui-widget'>\n" +
-				"<li class='ui-state-default ui-corner-all' title='Photo " + (featureSelectLabel) + "'>" + featureSelectLabel + "</li>\n" +
-				"</ul>\n" +
-				"</div>\n";
-	}
-	featuresHTML += '<div>\n';
+		featuresHTML += '<ul>\n';
+		//set up the selection buttons first:
+		for(var featureSelectCount=0;featureSelectCount<featureInfos.length;featureSelectCount++)
+		{
+			var featureSelectLabel = featureSelectCount + 1;
+			featuresHTML +=	"<li><a href='#tabs-" + featureSelectCount + "'>" + featureSelectLabel + "</a></li>\n";
+		}
+		featuresHTML += '</ul>\n';
+		
+		for(featureData in featureInfos)
+		{
+			featuresHTML += "<div id='tabs-" + featureSelectID + "'>" + featureInfos[featureData] + '</div>\n';
+			featureSelectID++;
+		}
+		featuresHTML += '</div>\n';
 	
-	featuresHTML += '<div style="clear:left;">\n';
-	for(featureData in featureInfos)
-	{
-		featuresHTML += "<div id='photo-" + featureSelectID + "'>" + featureInfos[featureData] + '</div>\n';
-		featureSelectID++;
+		$('#map-popup-content').html(featuresHTML);
+		$("#tabs").tabs();
+	
+		$('#map-popup').show();
 	}
-	featuresHTML += '</div>\n';
-
-	$('#map-popup-content').html(featuresHTML);
-	for(var featureSelectCount=0;featureSelectCount<featureInfos.length;featureSelectCount++)
-	{
-		$("#photo-" + featureSelectCount).click(function() {
-			for(var featureSelectCount=0;featureSelectCount<featureInfos.length;featureSelectCount++)
-			{
-				$("#photo-" + featureSelectCount).hide();
-			}
-			conlsole.info(this);
-			this.show();
-		});
-		$("#photo-" + featureSelectCount).hide();
-	}
-	//Add rollover image for buttons
-	$('.photo-button li').hover(
-			function() { $(this).addClass('ui-state-hover'); }, 
-			function() { $(this).removeClass('ui-state-hover'); }
-	);
-
-	$('#map-popup').show();	
 }
 
 
@@ -248,7 +245,7 @@ function addMarker(p)
 	var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
 	var icon = new OpenLayers.Icon('./images/pin.png', size,offset);
 	var marker = new OpenLayers.Marker(p, icon);
-	markersLayer.addMarker(marker);
+	maplayers['markersLayer'].addMarker(marker);
 }
 
 
