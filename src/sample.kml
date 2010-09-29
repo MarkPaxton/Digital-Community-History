@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Summary</name>
+    <Folder xmlns="">
+      <name>WEP</name>
+      <open>0</open>
+      <visibility>1</visibility>
+      <Folder id="6,2">
+        <name>Channel 6</name>
+        <open>0</open>
+        <visibility>1</visibility>
+        <Placemark>
+          <visibility>1</visibility>
+          <Style id="sn_shaded_dot">
+            <IconStyle>
+              <Icon>
+                <href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href>
+              </Icon>
+              <color>ff00ffff</color>
+              <scale>1</scale>
+            </IconStyle>
+            <LabelStyle>
+              <color>ff00ffff</color>
+              <scale>1</scale>
+            </LabelStyle>
+          </Style>
+          <name>WFSagri</name>
+          <description>WFSagri [00:0F:B5:C0:48:7A]
+WEP
+-85dBm
+Channel 6
+GPS
+     Lat,Lon,Alt  52.4196566666667,-4.083105,6.5
+     Speed (km/h) 0
+     Time (UTC)   2010-09-29T22:58:14.0Z
+     Precision    
+          Satellite Count 5
+          Fix Mode        3d
+          VDOP            2.5
+          HDOP            2
+          PDOP            3.2
+</description>
+          <Point>
+            <coordinates>-4.083105,52.4196566666667,6.5</coordinates>
+          </Point>
+        </Placemark>
+      </Folder>
+      <Folder id="7,2">
+        <name>Channel 7</name>
+        <open>0</open>
+        <visibility>1</visibility>
+      </Folder>
+      <Folder id="9,2">
+        <name>Channel 9</name>
+        <open>0</open>
+        <visibility>1</visibility>
+      </Folder>
+    </Folder>
+    <Folder xmlns="">
+      <name>WPA-TKIP</name>
+      <open>0</open>
+      <visibility>1</visibility>
+      <Folder id="6,4">
+        <name>Channel 6</name>
+        <open>0</open>
+        <visibility>1</visibility>
+      </Folder>
+      <Folder id="7,4">
+        <name>Channel 7</name>
+        <open>0</open>
+        <visibility>1</visibility>
+      </Folder>
+      <Folder id="9,4">
+        <name>Channel 9</name>
+        <open>0</open>
+        <visibility>1</visibility>
+        <Placemark>
+          <visibility>1</visibility>
+          <Style id="sn_shaded_dot">
+            <IconStyle>
+              <Icon>
+                <href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href>
+              </Icon>
+              <color>ff00aaff</color>
+              <scale>1.93333333333333</scale>
+            </IconStyle>
+            <LabelStyle>
+              <color>ff00aaff</color>
+              <scale>1</scale>
+            </LabelStyle>
+          </Style>
+          <name>NETGEAR</name>
+          <description>NETGEAR [C0:3F:0E:21:E8:BA]
+WPA-TKIP
+-71dBm
+Channel 9
+GPS
+     Lat,Lon,Alt  52.4196566666667,-4.083105,6.5
+     Speed (km/h) 0
+     Time (UTC)   2010-09-29T22:59:10.0Z
+     Precision    
+          Satellite Count 5
+          Fix Mode        3d
+          VDOP            2.5
+          HDOP            2.1
+          PDOP            3.2
+</description>
+          <Point>
+            <coordinates>-4.083105,52.4196566666667,6.5</coordinates>
+          </Point>
+        </Placemark>
+      </Folder>
+    </Folder>
+    <Folder xmlns="">
+      <name>WPA2</name>
+      <open>0</open>
+      <visibility>1</visibility>
+      <Folder id="6,5">
+        <name>Channel 6</name>
+        <open>0</open>
+        <visibility>1</visibility>
+      </Folder>
+      <Folder id="7,5">
+        <name>Channel 7</name>
+        <open>0</open>
+        <visibility>1</visibility>
+        <Placemark>
+          <visibility>1</visibility>
+          <Style id="sn_shaded_dot">
+            <IconStyle>
+              <Icon>
+                <href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href>
+              </Icon>
+              <color>ff0000ff</color>
+              <scale>0.933333333333333</scale>
+            </IconStyle>
+            <LabelStyle>
+              <color>ff0000ff</color>
+              <scale>1</scale>
+            </LabelStyle>
+          </Style>
+          <name>OrangeD0F1E2</name>
+          <description>OrangeD0F1E2 [00:26:91:D0:F1:E4]
+RSNA-CCMP
+-86dBm
+Channel 7
+GPS
+     Lat,Lon,Alt  52.4196566666667,-4.083105,6.5
+     Speed (km/h) 0
+     Time (UTC)   2010-09-29T22:58:33.0Z
+     Precision    
+          Satellite Count 5
+          Fix Mode        3d
+          VDOP            2.5
+          HDOP            2
+          PDOP            3.2
+</description>
+          <Point>
+            <coordinates>-4.083105,52.4196566666667,6.5</coordinates>
+          </Point>
+        </Placemark>
+      </Folder>
+      <Folder id="9,5">
+        <name>Channel 9</name>
+        <open>0</open>
+        <visibility>1</visibility>
+      </Folder>
+    </Folder>
+  </Document>
+</kml>

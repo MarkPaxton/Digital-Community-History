@@ -466,7 +466,7 @@ $(function() {
 	map.addLayer(maplayers['google_map']);
 
 	/* Nottingham 1861 image layer */
-	maplayers['notts_1861'] = new OpenLayers.Layer.Image(
+/*	maplayers['notts_1861'] = new OpenLayers.Layer.Image(
 		'1861 Map',
 		'./images/1861_notts.png',
 		new OpenLayers.Bounds( -1.158064,  52.946731, -1.139494, 52.958147).transform(map.displayProjection, map.projection),
@@ -478,7 +478,7 @@ $(function() {
 			maxExtent: mapBounds
 		}
 	);
-	transparentLayer = 'notts_1861';
+	transparentLayer = 'notts_1861';*/
 	//Don't add this layer until everything else is loaded as it slows down the mobile version
 	// see document.load
 	//map.addLayer(maplayers['notts_1861']);
@@ -502,11 +502,11 @@ $(function() {
 			kml_param = '?set=default';
 	}
 	
-	maplayers['photos'] = new OpenLayers.Layer.Vector("Picture the Past", {
+	maplayers['photos'] = new OpenLayers.Layer.Vector("Sample data", {
 		projection: map.displayProjection,
 		strategies: [new OpenLayers.Strategy.Fixed()],
 		protocol: new OpenLayers.Protocol.HTTP({
-			url: "make_kml.php" + kml_param,
+			url: "sample.kml" + kml_param,
 			format: new OpenLayers.Format.KML({
 				extractStyles: true,
 				extractAttributes: true
@@ -676,12 +676,12 @@ $(function() {
 });
 
 $(window).load(function() {
-	map.addLayer(maplayers['notts_1861']);
+	/*map.addLayer(maplayers['notts_1861']);
 	var whitehall_version = $.getUrlVar('whitehall');
 	if(whitehall_version)
 	{
 		$('head').append("<script type='text/javascript' src='./min/?f=js/mcp_map_w.js'></script>");
 	}
-	setOpacity(defaultOpacity, maplayers[transparentLayer]);
+	setOpacity(defaultOpacity, maplayers[transparentLayer]);*/
 	onWindowResized();	
 });
