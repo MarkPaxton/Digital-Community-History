@@ -58,7 +58,7 @@ function onWindowResized(showFooter)
 	$('#map-popup').height(newPopupHeight);
 	
 	// do the same with the width
-	var bordersWidth = $('#map').outerWidth(true) - $('#map').width();
+	var bordersWidth = $('#map').outerWidth(true) - $('#map').width() + 10;
 	$('#map').width($(window).width() - bordersWidth);
 	
 	bordersWidth = $('#map-popup').outerWidth(true) - $('#map-popup').width();
@@ -269,7 +269,10 @@ function updatePosition(location)
 	var locationLL = new OpenLayers.LonLat(location.coords.longitude, location.coords.latitude);		
 
 	// If the current location is out of bounds, then re-centre from jubilee
-	var imageBounds = new OpenLayers.Bounds( -1.158064,  52.946731, -1.139494, 52.958147);
+	//city centre
+	//var imageBounds = new OpenLayers.Bounds( -1.158064,  52.946731, -1.139494, 52.958147);
+	// downtown Borth
+	var imageBounds = new OpenLayers.Bounds(-4.051813,  52.484300, -4.048995, 52.487943);
 	if(!imageBounds.containsLonLat(locationLL))
 	{
 		/* This section re-centres the navigation around market square from
@@ -278,21 +281,27 @@ function updatePosition(location)
 		// This is the alternative centre - where you actually are
 		
 		//Aspire Cafe
-		var alt_lon = -1.18494;
-		var alt_lat = 52.95162;
+		//var alt_lon = -1.18494;
+		//var alt_lat = 52.95162;
 		
-		//West End, Beestone
+		//West End, Beeston
 		//var alt_lon = -1.21557;
 		//var alt_lat = 52.92373;
 
 		// Trip to Jerusalem
-		var desired_lon = -1.15200;
-		var desired_lat = 52.94937;
+		//var desired_lon = -1.15200;
+		//var desired_lat = 52.94937;
+		
+		//Borth train station
+		var desired_lon = -4.04942;
+		var desired_lat = 52.49100;
 		
 		// This is the desired centre - where the map should show you are
+		// 
 		//var desired_lon = -1.15050;
 		//var desired_lat = 52.95333;
 
+		
 		var corrected_lon = desired_lon + (location.coords.longitude - alt_lon);
 		var corrected_lat = desired_lat + (location.coords.latitude - alt_lat);
 
@@ -506,7 +515,7 @@ $(function() {
 		projection: map.displayProjection,
 		strategies: [new OpenLayers.Strategy.Fixed()],
 		protocol: new OpenLayers.Protocol.HTTP({
-			url: "sample.kml" + kml_param,
+			url: "sample.kml",
 			format: new OpenLayers.Format.KML({
 				extractStyles: true,
 				extractAttributes: true
@@ -672,7 +681,7 @@ $(function() {
 	//Centre on Nottingham market square
 	//map.setCenter(new OpenLayers.LonLat(-1.15050,  52.95333).transform(map.displayProjection, map.projection), 17);
 	//Centre map just outside Brewhouse Yard
-	map.setCenter(new OpenLayers.LonLat(-1.15200,  52.94937).transform(map.displayProjection, map.projection), 18);
+	map.setCenter(new OpenLayers.LonLat(-4.04942,  52.49100).transform(map.displayProjection, map.projection), 18);
 });
 
 $(window).load(function() {
