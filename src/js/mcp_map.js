@@ -397,6 +397,9 @@ var defaultOpacity = 0.3;
 var defaultBounds = new OpenLayers.Bounds(-1.4, 52.804, -0.97, 53.104); */
 /* */
 
+//var kmlLayers = new Array();
+var kmlLayers = new Array( "O2");
+//"GPS", "O2", "Orange", "Three", "Three[2]", "T-Mobile", "Vodafone" );
 
 // Use the jquery $() function to set up script to run on loadComplete of the page...
 
@@ -466,6 +469,7 @@ $(function() {
 	map.addLayer(maplayers['google_map']);
 
 	/* Nottingham 1861 image layer */
+	/*
 	maplayers['notts_1861'] = new OpenLayers.Layer.Image(
 		'1861 Map',
 		'./images/1861_notts.png',
@@ -479,6 +483,7 @@ $(function() {
 		}
 	);
 	transparentLayer = 'notts_1861';
+	*/
 	//Don't add this layer until everything else is loaded as it slows down the mobile version
 	// see document.load
 	//map.addLayer(maplayers['notts_1861']);
@@ -487,7 +492,7 @@ $(function() {
 	//use the url params to choose which subset of images to show: 
 	var imageset_param = $.getUrlVar('imageset');
 	var kml_param = '';
-	switch(imageset_param)
+/*	switch(imageset_param)
 	{
 		case 'selected':
 			kml_param = '?set=selected';
@@ -501,20 +506,23 @@ $(function() {
 		default:
 			kml_param = '?set=default';
 	}
+*/
 	
-	maplayers['photos'] = new OpenLayers.Layer.Vector("Picture the Past", {
-		projection: map.displayProjection,
-		strategies: [new OpenLayers.Strategy.Fixed()],
-		protocol: new OpenLayers.Protocol.HTTP({
-			url: "make_kml.php" + kml_param,
-			format: new OpenLayers.Format.KML({
-				extractStyles: true,
-				extractAttributes: true
+	for(layerID	in kmlLayers)
+	{
+		var layerName = kmlLayers[layerID];
+		maplayers[layerName] = new OpenLayers.Layer.Vector(layerName, {
+			projection: map.displayProjection,
+			strategies: [new OpenLayers.Strategy.Fixed()],
+			protocol: new OpenLayers.Protocol.HTTP({
+				url: "./data/" + layerName + ".kml",
+				format: new OpenLayers.Format.KML({
+					extractStyles: true,
+					extractAttributes: true
+				})
 			})
-		})
-	});
-	map.addLayer(maplayers['photos']);
-
+		});
+	}
 	/*
 	targetAreaLayer = new OpenLayers.Layer.Vector("Trigger zone", {
 		projection: map.displayProjection
@@ -539,15 +547,7 @@ $(function() {
 	/* Setting up the map */
 	/* Also uses JQuery UI to add more controls and control the page layout */
 
-	select = new OpenLayers.Control.SelectFeature(maplayers['photos']);
-	map.addControl(select);
-    select.activate();
-
-    maplayers['photos'].events.on({
-        "featureselected": onFeatureSelect,
-        "featureunselected": onFeatureUnselect
-    });
-
+	
 	map.events.register('moveend', this, onMapMoved);
 
 	map.addControl(new OpenLayers.Control.Navigation());
@@ -668,20 +668,24 @@ $(function() {
 	// Resize the map to fit window whenever the size is changed
 	$(window).resize(onWindowResized);
 
-
-	//Centre on Nottingham market square
-	//map.setCenter(new OpenLayers.LonLat(-1.15050,  52.95333).transform(map.displayProjection, map.projection), 17);
-	//Centre map just outside Brewhouse Yard
-	map.setCenter(new OpenLayers.LonLat(-1.15200,  52.94937).transform(map.displayProjection, map.projection), 18);
+	map.setCenter(new OpenLayers.LonLat(-4.05135,  52.49613).transform(map.displayProjection, map.projection), 14);
 });
 
 $(window).load(function() {
-	map.addLayer(maplayers['notts_1861']);
-	var whitehall_version = $.getUrlVar('whitehall');
-	if(whitehall_version)
-	{
-		$('head').append("<script type='text/javascript' src='./min/?f=js/mcp_map_w.js'></script>");
+	//map.addLayer(maplayers['notts_1861']);
+	//setOpacity(defaultOpacity, maplayers[transparentLayer]);
+	onWindowResized();
+	for( layerID in kmlLayers)
+	 {
+	 	var layerName = kmlLayers[layerID];
+		map.addLayer(maplayers[layerName]);
+		maplayers[layerName].events.on({
+			  "featureselected": onFeatureSelect,
+			  "featureunselected": onFeatureUnselect
+		 });
+		 
+		select = new OpenLayers.Control.SelectFeature(maplayers[layerName]);
+		map.addControl(select);
+		select.activate();
 	}
-	setOpacity(defaultOpacity, maplayers[transparentLayer]);
-	onWindowResized();	
 });
