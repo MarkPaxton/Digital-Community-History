@@ -43,6 +43,15 @@ function onWindowResized(showFooter)
 	//Correct for borders and margins that aren't counted when setting with .height()
 	// by looking at the difference between document height and window height to fine
 	// the discrepancy
+
+	// do the same with the width
+	$('#map').width($(window).width());
+	var bordersWidth = $(document).width() - $(window).width() + 1;
+	$('#map').width($('#map').width() - bordersWidth);
+	
+	$('#map-popup').width($(window).width() - bordersWidth);
+
+	
 	var bordersHeight = $('#map').outerHeight(true) - $('#map').height();
 	$('#map').height($(window).height() - headerFooterHeight - bordersHeight);
 	
@@ -57,13 +66,6 @@ function onWindowResized(showFooter)
 	$('#map').height(newMapHeight);
 	$('#map-popup').height(newPopupHeight);
 	
-	// do the same with the width
-	var bordersWidth = $('#map').outerWidth(true) - $('#map').width() + 10;
-	$('#map').width($(window).width() - bordersWidth);
-	
-	bordersWidth = $('#map-popup').outerWidth(true) - $('#map-popup').width();
-	$('#map-popup').width($(window).width() - bordersWidth);
-
 	//Reposition the popup so that it covers the map if the header has gone
 	$('#map-popup').css('top', $('#map').position().top);
 }
@@ -98,7 +100,7 @@ function onPopupClose(evt) {
  */
 function generateFeatureHTML(feature)
 {
-	var featureHTML = '<h2>' + feature.attributes.name + '</h2>' + feature.attributes.description;
+	var featureHTML = '<h2>' + feature.attributes.title + '</h2>' + feature.attributes.description;
 	return featureHTML;
 }
 
@@ -413,6 +415,9 @@ var kmlLayers = new Array( "sample");
 // Use the jquery $() function to set up script to run on loadComplete of the page...
 
 $(function() {
+	
+	//Set up openlayers proxy to get remote urls
+	 OpenLayers.ProxyHost = "proxy.php?url=";
 	/*
 	 * First of all work out whether to display the mobile version or the full version
 	 */
@@ -477,81 +482,59 @@ $(function() {
 	});
 	map.addLayer(maplayers['google_map']);
 
-	/* Nottingham 1861 image layer */
+	maplayers['remote-geoserver'] = new OpenLayers.Layer.WMS(
+            "Phone signal log #1", "http://reeveab1.miniserver.com:8180/geoserver/wms",
+            {
+                layers: 'ruraldivide:SIGNALSTRENGTHONLOCATIONCHANGEENTRY',
+                styles: '',
+                srs: 'EPSG:4269',
+                transparent:'true',
+                tiled: 'true',
+                transparent: 'true',
+                tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
+            },
+            {
+                buffer: 0,
+                displayOutsideMaxExtent: true
+            } 
+        );
+    
+	map.addLayer(maplayers['remote-geoserver']);
+    
 	/*
-	maplayers['notts_1861'] = new OpenLayers.Layer.Image(
-		'1861 Map',
-		'./images/1861_notts.png',
-		new OpenLayers.Bounds( -1.158064,  52.946731, -1.139494, 52.958147).transform(map.displayProjection, map.projection),
-		new OpenLayers.Size(1492, 1542),
-		{	
-			isBaseLayer: false,
-			opacity: defaultOpacity,
-			alwaysInRange: true,
-			maxExtent: mapBounds
-		}
-	);
-	transparentLayer = 'notts_1861';
+	maplayers['fixmystreet'] = new OpenLayers.Layer.GeoRSS( 'FixMyStreet',
+        "http://www.fixmystreet.com/rss/reports/Ceredigion", {
+		useFeedTitle: 'true',
+		icon: new OpenLayers.Icon("images/marker.png", new OpenLayers.Size(21,25)),
+		projection: 'EPSG:4326'		
+    });
 	*/
-	//Don't add this layer until everything else is loaded as it slows down the mobile version
-	// see document.load
-	//map.addLayer(maplayers['notts_1861']);
-
-	
-	//use the url params to choose which subset of images to show: 
-	var imageset_param = $.getUrlVar('imageset');
-	var kml_param = '';
-/*	switch(imageset_param)
+	style = new OpenLayers.Style(
 	{
-		case 'selected':
-			kml_param = '?set=selected';
-		break;
-		case 'trip':
-			kml_param = '?set=trip';
-		break;
-		case 'full':
-			kml_param = '?set=full';
-		break;
-		default:
-			kml_param = '?set=default';
-	}
-*/
-	
-	for(layerID	in kmlLayers)
-	{
-		var layerName = kmlLayers[layerID];
-		maplayers[layerName] = new OpenLayers.Layer.Vector(layerName, {
-			projection: map.displayProjection,
-			strategies: [new OpenLayers.Strategy.Fixed()],
-			protocol: new OpenLayers.Protocol.HTTP({
-				url: "./data/" + layerName + ".kml",
-				format: new OpenLayers.Format.KML({
-					extractStyles: true,
-					extractAttributes: true
-				})
-			})
-		});
-	}
-	/*
-	targetAreaLayer = new OpenLayers.Layer.Vector("Trigger zone", {
-		projection: map.displayProjection
+	    'externalGraphic': "images/marker.png",
+	    'graphicHeight': 25,
+	    'graphicWidth': 21,
+	    'graphicXOffset': -10.5,
+	    'graphicYOffset': -25
 	});
-	targetCircle = new OpenLayers.Feature.Vector(
-		new OpenLayers.Geometry.Point(-1.15200,  52.94937),
-		{},
-		{
-			pointRadius: 6,
-			fill: true
+	maplayers['fixmystreet'] = new OpenLayers.Layer.GML("FixMyStreet", 
+			"http://www.fixmystreet.com/rss/reports/Ceredigion", {
+		   format: OpenLayers.Format.GeoRSS,
+		   formatOptions: {
+			   useFeedTitle: 'true'
+		    },
+		    projection: 'EPSG:4326',
+		    styleMap: new OpenLayers.StyleMap({
+                "default": style
+		    })
 		});
-	targetAreaLayer.addFeatures(targetCircle);
 	
-	map.addLayer(maplayers['targetAreaLayer']);
-	*/
-	
-	maplayers['markersLayer'] = new OpenLayers.Layer.Markers("Location", {
+	map.addLayer(maplayers['fixmystreet']);
+
+	/*maplayers['markersLayer'] = new OpenLayers.Layer.Markers("Live Location", {
 		displayInLayerSwitcher: false
 	});
-	map.addLayer(maplayers['markersLayer']);
+	map.addLayer(maplayers['markersLayer']);*/
 	
 	/* Setting up the map */
 	/* Also uses JQuery UI to add more controls and control the page layout */
@@ -684,7 +667,7 @@ $(window).load(function() {
 	//map.addLayer(maplayers['notts_1861']);
 	//setOpacity(defaultOpacity, maplayers[transparentLayer]);
 	onWindowResized();
-	for( layerID in kmlLayers)
+	/*for( layerID in kmlLayers)
 	 {
 	 	var layerName = kmlLayers[layerID];
 		map.addLayer(maplayers[layerName]);
@@ -692,9 +675,17 @@ $(window).load(function() {
 			  "featureselected": onFeatureSelect,
 			  "featureunselected": onFeatureUnselect
 		 });
-		 
+		 	
 		select = new OpenLayers.Control.SelectFeature(maplayers[layerName]);
 		map.addControl(select);
 		select.activate();
-	}
+	}*/	
+	
+	select = new OpenLayers.Control.SelectFeature(maplayers['fixmystreet']);
+	map.addControl(select);
+	select.activate();
+	maplayers['fixmystreet'].events.on({
+		  "featureselected": onFeatureSelect,
+		  "featureunselected": onFeatureUnselect
+	 });
 });
